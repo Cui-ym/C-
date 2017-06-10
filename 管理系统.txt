@@ -1,0 +1,257 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define SIZE sizeof(stu)
+
+typedef struct subjects{
+    char name[10];
+    float score;
+}sub;
+
+typedef struct str{
+    char name[100];
+    int id;
+    sub subjects[3];
+    float aver;
+    struct str *next;
+}*stu;
+
+stu head, fin;
+
+stu create();
+stu cancle();
+stu insert();
+stu change();
+stu anew();
+void list();
+
+int main(void)
+{
+    int a;
+    printf("***************************\n");
+    printf("*  (1)查看元素  (2)删除信息  *\n");
+    printf("*  (3)插入元素  (4)改变信息  *\n");
+    printf("*  (5)重写信息  (6)保存退出  *\n");
+    printf("***************************\n");
+    printf("\n注：输入0以结束程序！\n");
+    printf("选择操作：\n");
+    
+    scanf("%d", &a);
+    
+    head = create();
+    
+    while(a){
+//        switch (a) {
+//            case 1:
+//                head = stu create();
+//                break;
+//        
+//            case 2:
+//                head = stu cancle();
+//                break;
+//        
+//            case 3:
+//                head = stu insert();
+//                break;
+//           
+//            case 4:
+//            
+//                break;
+//            
+//            case 5:
+//            
+//                break;
+//        
+//            case 6:
+//                list();
+//                break;
+//        }
+        printf("\n选择操作：\n");
+        scanf("%d", &a);
+    }
+}
+
+//读入文件信息
+stu create()
+{
+    char name[20];
+    int id;
+    char sub1[20];
+    char sub2[20];
+    char sub3[20];
+    float score1 = 0;
+    float score2 = 0;
+    float score3 = 0;
+    float aver = 0;
+    
+    char filename[] = "/User/cuiyiming/Documents/管理系统.txt";
+    FILE *fp;
+    stu current;
+    head = (stu)malloc(SIZE);
+    fin = (stu)malloc(SIZE);
+    
+    current = head;
+    current->next = NULL;
+    
+    fp = fopen(filename, "r");
+    
+    if (NULL == fp){
+        printf("File open error\n");
+        exit(0);
+    }
+    
+    while(!feof(fp))
+    {
+        fscanf(fp,"%s %d %s %f %s %f %s %f %f", name, &id, sub1, &score1, sub2, &score2, sub3, &score3, &aver);
+        current->next = (stu)malloc(SIZE);
+        current = current->next;
+    
+        strcpy(current->name, name);
+        current->id = id;
+        strcpy(current->subjects[0].name, sub1);
+        current->subjects[0].score = score1;
+        strcpy(current->subjects[1].name, sub2);
+        current->subjects[1].score = score2;
+        strcpy(current->subjects[2].name, sub3);
+        current->subjects[2].score = score3;
+        current->aver = aver;
+    }
+    fclose(fp);
+    
+    fin = current;
+    fin->next = NULL;
+    
+    return head;
+}
+
+//删除元素
+stu cancle()
+{
+    int id;
+    stu current, last;
+    current = head->next;
+    last = head;
+    printf("请输入要删除的学号：\n");
+    scanf("%d", &id);
+    
+    while(current != NULL){
+        if (current->id == id){
+            last->next = current->next;
+            break;
+        }
+        if (current->id != id){
+            last = current;
+            current = current->next;
+        }
+    }
+    
+    return head;
+}
+
+//插入元素
+stu insert()
+{
+    stu current;
+    char name[20];
+    int id;
+    char sub1[20];
+    char sub2[20];
+    char sub3[20];
+    float score1 = 0;
+    float score2 = 0;
+    float score3 = 0;
+    float aver = 0;
+    
+    current = fin->next;
+    
+    printf("请输入插入学生信息：\n");
+    printf("请输入学生姓名:\n");
+    scanf("%s ", name);
+    printf("请输入学生学号：\n");
+    scanf("%d ", &id);
+    printf("请输入学生科目一名称:\n");
+    scanf("%s ", sub1);
+    printf("请输入学生科目一成绩:\n");
+    scanf("%f ", &score1);
+    printf("请输入学生科目二名称:\n");
+    scanf("%s ", sub2);
+    printf("请输入学生科目二成绩:\n");
+    scanf("%f ", &score2);
+    printf("请输入学生科目三名称:\n");
+    scanf("%s ", sub3);
+    printf("请输入学生科目三成绩:\n");
+    scanf("%f ", &score3);
+    
+    strcpy(current->name, name);
+    current->id = id;
+    strcpy(current->subjects[0].name, sub1);
+    current->subjects[0].score = score1;
+    strcpy(current->subjects[1].name, sub2);
+    current->subjects[1].score = score2;
+    strcpy(current->subjects[2].name, sub3);
+    current->subjects[2].score = score3;
+    aver = (score3 + score2 + score1) / 3;
+    current->aver = aver;
+    
+    fin->next = current;
+    fin = current;
+    fin->next = NULL;
+    return head;
+}
+
+//重写元素
+stu anew()
+{
+    stu last, current;
+    int id;
+    char sub1[20];
+    char sub2[20];
+    char sub3[20];
+    float score1 = 0;
+    float score2 = 0;
+    float score3 = 0;
+    float aver = 0;
+
+    printf("请输入要更改的学生学号：\n");
+    scanf("%d", &id);
+    
+    last = head;
+    current = head->next;
+    
+    while(current->next != NULL){
+        if (current->id == id){
+            printf("请输入重写学生的信息：\n");
+            printf("请输入学生科目一名称:\n");
+            scanf("%s ", sub1);
+            printf("请输入学生科目一成绩:\n");
+            scanf("%f ", &score1);
+            printf("请输入学生科目二名称:\n");
+            scanf("%s ", sub2);
+            printf("请输入学生科目二成绩:\n");
+            scanf("%f ", &score2);
+            printf("请输入学生科目三名称:\n");
+            scanf("%s ", sub3);
+            printf("请输入学生科目三成绩:\n");
+            scanf("%f ", &score3);
+            aver = (score3 + score2 + score1) / 3;
+            
+            strcpy(current->subjects[0].name, sub1);
+            current->subjects[0].score = score1;
+            strcpy(current->subjects[1].name, sub2);
+            current->subjects[1].score = score2;
+            strcpy(current->subjects[2].name, sub3);
+            current->subjects[2].score = score3;
+            current->aver = aver;
+            break;
+        }else{
+            last = current;
+            current = current->next;
+        }
+    }
+    if (current->next == NULL){
+        printf("输入学生学号错误\n");
+    }
+    
+    return head;
+}

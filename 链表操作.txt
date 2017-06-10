@@ -1,0 +1,170 @@
+//
+//  main.cpp
+//  链表学习
+//
+//  Created by 崔一鸣 on 2017/3/6.
+//  Copyright © 2017年 崔一鸣. All rights reserved.
+//
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+struct student {
+    char name[20];
+    struct student *next;
+} ;
+
+//链表元素打印
+void list(struct student *p)
+{
+    while(1){
+        if(p->next != NULL){
+            printf("%s\n", p->name);
+            p = p->next;
+        }else{
+            printf("%s\n", p->name);
+            break;
+        }
+    }
+}
+
+
+//链表数据的读入
+struct student *create()
+{
+    struct student *head, *current, *pnew;
+    char str[20], flag;
+    
+    printf("Please input name:\n");
+    scanf("%s", str);
+    getchar();
+    
+    //分配内存空间
+    head = (struct student *)malloc(sizeof(struct student));
+    
+    strcpy(head->name, str);
+    current = head;   //头地址赋给当前元素地址
+    
+    printf("\n是否继续输入");
+    scanf("%c", &flag);
+    
+    while(flag != 'n'){
+        printf("\nPlease input name:\n");
+        scanf("%s", str);
+        getchar();
+        
+        pnew = (struct student *)malloc(sizeof(struct student));
+        strcpy(pnew->name, str);
+        
+        //当前元素的指针指向下一个元素
+        current->next = pnew;
+        
+        //把下一个的地址赋给当前地址
+        current = pnew;
+        
+        printf("\n是否继续输入");
+        scanf("%c", &flag);
+    }
+    
+    //让当前的元素指向NULL
+    current->next = NULL;
+    
+    return head;
+}
+
+//链表插入元素
+struct student *insert(struct student *p)
+{
+    int i;
+    struct student *insert, *current;
+    char str[20];
+    
+    current = p; //当前元素地址为链表头元素地址
+    
+    printf("\nPlease input name:\n");
+    scanf("%s", str);
+    getchar();
+    
+    printf("\n输入插入位置：");
+    scanf("%d", &i);
+    getchar();
+    
+    //为插入元素分配内存，并赋值
+    insert = (struct student *)malloc(sizeof(struct student));
+    strcpy(insert->name, str);
+    
+    if(i > 0){
+        while (i > 1){                  //让当前元素的next地址指向插入元素
+            current = current->next;
+            i--;
+        }
+        
+        //插入元素的下一个元素地址为当前元素的下一个元素地址
+        insert->next = current->next;
+        
+        //当前元素的下一个元素地址为插入元素地址
+        current->next = insert;
+    
+    }else{
+        insert->next = p;
+    }
+    printf("\n插入之后的顺序为\n");
+    list(insert);
+    return insert;
+}
+
+//链表删除元素
+void cancle(struct student *p)
+{
+    int i;
+    struct student *current, *cancle;
+    
+    printf("\n输入删除第几个元素:");
+    scanf("%d", &i);
+    
+    current = p;
+    
+    if(i){
+        while(i-- > 1){
+            current = current->next;
+        }
+        cancle = current->next;
+        current->next = cancle->next;
+    }else{
+        p = current->next;
+    }
+    printf("\n删除第%d个元素后的链表为：\n", i);
+    list(p);
+    
+}
+
+//主函数
+int main(void)
+{
+    int flag1, flag2;
+    struct student *p;
+    p = create();
+    
+    printf("原链表元素\n");
+    list(p);
+    
+    printf("是否需要加入元素\n");
+    scanf("%d", &flag1);
+    
+    while(flag1){
+        p = insert(p);
+        printf("是否需要继续加入元素\n");
+        scanf("%d", &flag1);
+    }
+    printf("是否需要删除元素\n");
+    scanf("%d", &flag2);
+    
+    while(flag2){
+        cancle(p); 
+        printf("是否需要继续删除元素\n");
+        scanf("%d", &flag2);
+    }
+    
+    return 0;
+}
